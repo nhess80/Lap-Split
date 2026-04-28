@@ -2,433 +2,47 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#0f0f1a">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Lap Splitter">
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="icon" type="image/png" href="icons/icon-192.png">
-  <title>Lap Splitter</title>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clearing Cache...</title>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { -webkit-text-size-adjust: 100%; }
-    body {
-      font-family: 'Outfit', sans-serif;
-      background: linear-gradient(145deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
-      color: #e8e8f0;
-      min-height: 100vh;
-      min-height: 100dvh;
-      padding: env(safe-area-inset-top) 20px 40px;
-      max-width: 600px;
-      margin: 0 auto;
-      -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-    }
-    input:focus, button:focus { outline: none; }
-    button { -webkit-tap-highlight-color: transparent; }
-
-    /* Header */
-    .header { text-align: center; margin-bottom: 28px; padding-top: 16px; }
-    .header-top { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 4px; }
-    .title { font-family: 'Outfit', sans-serif; font-size: 28px; font-weight: 800; letter-spacing: 0.15em; color: #fff; }
-    .subtitle { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.25em; color: #888; }
-
-    /* Sections */
-    .section { margin-bottom: 24px; }
-    .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.2em; color: #666; font-weight: 600; margin-bottom: 10px; }
-
-    /* Race selector */
-    .race-row { display: flex; gap: 8px; }
-    .race-btn {
-      flex: 1; padding: 12px 8px; border: 1.5px solid #2a2a45; border-radius: 10px;
-      background: transparent; cursor: pointer; display: flex; flex-direction: column;
-      align-items: center; gap: 2px; transition: all 0.25s; -webkit-tap-highlight-color: transparent;
-    }
-    .race-btn.active { border-color: #FF6B4A; background: rgba(255,107,74,0.08); box-shadow: 0 0 20px rgba(255,107,74,0.1); }
-    .race-btn-distance { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; color: #fff; transition: color 0.25s; }
-    .race-btn.active .race-btn-distance { color: #FF6B4A; }
-    .race-btn-detail { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #666; letter-spacing: 0.05em; }
-
-    /* Goal */
-    .goal-label-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-    .lock-btn {
-      font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
-      letter-spacing: 0.05em; padding: 5px 12px; border: 1.5px solid #444;
-      border-radius: 8px; background: transparent; cursor: pointer;
-      display: flex; align-items: center; gap: 6px; transition: all 0.25s; color: #666;
-    }
-    .lock-btn.locked { border-color: #FF6B4A; color: #FF6B4A; background: rgba(255,107,74,0.07); }
-    .lock-hint { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #555; margin-bottom: 8px; font-style: italic; }
-    .goal-row { display: flex; flex-direction: column; gap: 10px; }
-    .goal-input-wrap { position: relative; display: inline-flex; align-items: center; }
-    .goal-input {
-      font-family: 'JetBrains Mono', monospace; font-size: 32px; font-weight: 700;
-      color: #fff; background: #1e1e32; border: 2px solid #2a2a45; border-radius: 12px;
-      padding: 10px 70px 10px 16px; width: 100%; max-width: 220px; transition: border-color 0.2s;
-    }
-    .goal-input:focus { border-color: #FF6B4A; }
-    .goal-unit { position: absolute; right: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #555; }
-    .presets { display: flex; gap: 6px; flex-wrap: wrap; }
-    .preset-btn {
-      font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500;
-      padding: 6px 14px; border: 1.5px solid #2a2a45; border-radius: 8px;
-      background: transparent; color: #999; cursor: pointer; transition: all 0.2s;
-    }
-    .preset-btn.active { border-color: #FF6B4A; color: #FF6B4A; background: rgba(255,107,74,0.08); }
-
-    /* Strategy */
-    .strategy-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-    .strategy-btn {
-      font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 500;
-      padding: 8px 16px; border: 1.5px solid #2a2a45; border-radius: 8px;
-      background: transparent; color: #999; cursor: pointer;
-      display: flex; align-items: center; gap: 6px; transition: all 0.2s;
-    }
-    .strategy-btn.active { border-color: #4DC9F6; color: #4DC9F6; background: rgba(77,201,246,0.08); }
-    .strategy-icon { font-size: 16px; }
-    .custom-badge {
-      font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em;
-      color: #9B6DFF; background: rgba(155,109,255,0.08); padding: 4px 10px; border-radius: 6px; font-weight: 600;
-    }
-
-    /* Bar */
-    .bar-container { display: flex; height: 52px; border-radius: 8px; overflow: visible; position: relative; cursor: col-resize; touch-action: none; }
-    .bar-segment {
-      display: flex; align-items: center; justify-content: center;
-      position: relative; transition: opacity 0.2s; min-width: 20px;
-    }
-    .bar-label {
-      font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
-      color: #000; text-shadow: 0 1px 2px rgba(255,255,255,0.2); pointer-events: none; white-space: nowrap;
-    }
-    .bar-divider {
-      position: absolute; right: -8px; top: -6px; bottom: -6px; width: 16px;
-      cursor: col-resize; z-index: 10; touch-action: none;
-    }
-    .bar-markers { display: flex; justify-content: space-between; margin-top: 6px; }
-    .marker-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #444; letter-spacing: 0.05em; }
-
-    /* Lap cards */
-    .lap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .lap-card {
-      background: #1a1a30; border-radius: 10px; padding: 14px 14px 12px;
-      transition: all 0.25s ease; border-top: 3px solid;
-    }
-    .lap-card.highlight { transform: translateY(-2px); }
-    .lap-header { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
-    .lap-dot { width: 8px; height: 8px; border-radius: 50%; }
-    .lap-name { font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 600; color: #ccc; }
-    .lap-dist { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #555; margin-left: auto; }
-    .lap-time { font-family: 'JetBrains Mono', monospace; font-size: 26px; font-weight: 700; color: #fff; margin-bottom: 8px; letter-spacing: -0.02em; }
-    .lap-slider {
-      width: 100%; height: 6px; border-radius: 3px;
-      -webkit-appearance: none; appearance: none; cursor: pointer; margin-bottom: 8px;
-    }
-    .lap-slider::-webkit-slider-thumb {
-      -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%;
-      background: #fff; border: 2px solid #333; cursor: pointer; margin-top: -6px;
-    }
-    .lap-slider::-moz-range-thumb {
-      width: 18px; height: 18px; border-radius: 50%;
-      background: #fff; border: 2px solid #333; cursor: pointer;
-    }
-    .lap-meta { display: flex; justify-content: space-between; align-items: center; }
-    .lap-pace { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #777; }
-    .lap-cum { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #555; }
-
-    /* Table */
-    .table { background: #14142a; border-radius: 10px; overflow: hidden; border: 1px solid #222240; }
-    .table-header { display: flex; padding: 10px 14px; border-bottom: 1px solid #222240; }
-    .table-cell {
-      flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #666;
-      letter-spacing: 0.08em; font-weight: 600; display: flex; align-items: center; gap: 6px;
-    }
-    .table-cell.narrow { flex: 0.8; }
-    .table-row { display: flex; padding: 10px 14px; border-bottom: 1px solid #1a1a35; transition: background 0.15s; }
-    .table-mono { font-size: 13px; color: #ccc; font-weight: 500; }
-    .table-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
-    .table-total { display: flex; padding: 12px 14px; background: #1a1a35; }
-    .table-bold { font-weight: 700; }
+    body { background: #0f0f1a; color: #fff; font-family: system-ui; display: flex; align-items: center; justify-content: center; min-height: 100vh; text-align: center; }
+    .msg { font-size: 18px; }
+    .done { color: #4DC9F6; }
+    a { color: #FF6B4A; }
   </style>
 </head>
 <body>
-
-<div id="app"></div>
-
-<script>
-const RACES = {
-  400: { distance: 400, lapDist: 100, unit: '100m', defaultGoal: 52,
-    presets: [{l:'0:48',s:48},{l:'0:52',s:52},{l:'0:56',s:56},{l:'1:00',s:60},{l:'1:05',s:65}],
-    markers: ['0m','100m','200m','300m','400m'] },
-  800: { distance: 800, lapDist: 200, unit: '200m', defaultGoal: 120,
-    presets: [{l:'1:50',s:110},{l:'2:00',s:120},{l:'2:10',s:130},{l:'2:20',s:140},{l:'2:30',s:150}],
-    markers: ['0m','200m','400m','600m','800m'] },
-  1600: { distance: 1600, lapDist: 400, unit: '400m', defaultGoal: 300,
-    presets: [{l:'4:00',s:240},{l:'4:30',s:270},{l:'5:00',s:300},{l:'5:30',s:330},{l:'6:00',s:360}],
-    markers: ['0m','400m','800m','1200m','1600m'] }
-};
-const COLORS = ['#FF6B4A','#FFB84D','#4DC9F6','#9B6DFF'];
-
-function fmt(t) {
-  if (!t || t < 0) return '0:00.00';
-  const m = Math.floor(t / 60), s = t % 60, ws = Math.floor(s), h = Math.round((s - ws) * 100);
-  return m + ':' + String(ws).padStart(2,'0') + '.' + String(h).padStart(2,'0');
-}
-function parseT(str) {
-  const c = str.replace(/[^0-9:.]/g, ''), p = c.split(':');
-  if (p.length === 2) return (parseInt(p[0])||0)*60 + (parseFloat(p[1])||0);
-  return parseFloat(c) || 0;
-}
-
-let state = {
-  raceKey: 1600, goalSeconds: 300, goalInput: '5:00.00',
-  laps: [75,75,75,75], strategy: 'even', goalLocked: true, activeLap: null
-};
-
-function race() { return RACES[state.raceKey]; }
-function totalLaps() { return state.laps.reduce((a,b) => a+b, 0); }
-function cumulative() { let c = []; state.laps.reduce((a,b,i) => { c.push(a+b); return a+b; }, 0); return c; }
-function lapPace(t) { return fmt((t / race().lapDist) * 1609.34); }
-function totalPace(t) { return fmt((t / race().distance) * 1609.34); }
-
-function switchRace(key) {
-  const r = RACES[key];
-  state.raceKey = key;
-  state.goalSeconds = r.defaultGoal;
-  state.goalInput = fmt(r.defaultGoal);
-  const b = r.defaultGoal / 4;
-  state.laps = [b,b,b,b];
-  state.strategy = 'even';
-  state.goalLocked = true;
-  render();
-}
-function applyGoal(secs) {
-  state.goalSeconds = secs;
-  const b = secs / 4;
-  state.laps = [b,b,b,b];
-  state.strategy = 'even';
-  render();
-}
-function applyStrategy(type) {
-  state.strategy = type;
-  const g = state.goalSeconds, avg = g / 4;
-  if (type === 'even') state.laps = [avg,avg,avg,avg];
-  else if (type === 'negative') state.laps = [avg*1.08, avg*1.03, avg*0.97, avg*0.92];
-  else if (type === 'positive') state.laps = [avg*0.92, avg*0.97, avg*1.03, avg*1.08];
-  render();
-}
-function handleLapChange(index, val) {
-  if (state.goalLocked) {
-    const clamped = Math.max(0.5, Math.min(state.goalSeconds - 1.5, val));
-    const remaining = state.goalSeconds - clamped;
-    const others = [0,1,2,3].filter(i => i !== index);
-    const otherTotal = others.reduce((s,i) => s + state.laps[i], 0);
-    state.laps[index] = clamped;
-    if (otherTotal > 0) others.forEach(i => { state.laps[i] = (state.laps[i] / otherTotal) * remaining; });
-    else others.forEach(i => { state.laps[i] = remaining / 3; });
-  } else {
-    state.laps[index] = Math.max(0.5, Math.min(600, val));
-    const t = totalLaps();
-    state.goalSeconds = t;
-    state.goalInput = fmt(t);
-  }
-  state.strategy = 'custom';
-  render();
-}
-
-function setupBarDrag(barEl) {
-  for (let idx = 0; idx < 3; idx++) {
-    const divider = barEl.querySelector(`.bar-divider[data-idx="${idx}"]`);
-    if (!divider) continue;
-    const start = (e) => {
-      e.preventDefault();
-      const rect = barEl.getBoundingClientRect();
-      const w = rect.width;
-      const dragTotal = state.goalLocked ? state.goalSeconds : totalLaps();
-      const move = (ev) => {
-        const cx = ev.touches ? ev.touches[0].clientX : ev.clientX;
-        const frac = Math.max(0.02, Math.min(0.98, (cx - rect.left) / w));
-        const prev = state.laps.slice(0, idx).reduce((a,b) => a+b, 0);
-        const nextEnd = state.laps.slice(0, idx+2).reduce((a,b) => a+b, 0);
-        const nv = frac * dragTotal - prev;
-        if (nv >= 2 && nextEnd - prev - nv >= 2) {
-          const delta = nv - state.laps[idx];
-          state.laps[idx] = nv;
-          state.laps[idx+1] -= delta;
-          state.strategy = 'custom';
-          render();
+  <div>
+    <div class="msg" id="status">Clearing old caches...</div>
+  </div>
+  <script>
+    async function clearEverything() {
+      var status = document.getElementById('status');
+      try {
+        // Unregister ALL service workers
+        if ('serviceWorker' in navigator) {
+          var registrations = await navigator.serviceWorker.getRegistrations();
+          for (var i = 0; i < registrations.length; i++) {
+            await registrations[i].unregister();
+          }
+          status.textContent = 'Removed ' + registrations.length + ' service worker(s)...';
         }
-      };
-      const up = () => {
-        document.removeEventListener('mousemove', move);
-        document.removeEventListener('mouseup', up);
-        document.removeEventListener('touchmove', move);
-        document.removeEventListener('touchend', up);
-      };
-      document.addEventListener('mousemove', move);
-      document.addEventListener('mouseup', up);
-      document.addEventListener('touchmove', move, {passive: false});
-      document.addEventListener('touchend', up);
-    };
-    divider.addEventListener('mousedown', start);
-    divider.addEventListener('touchstart', start, {passive: false});
-  }
-}
-
-function render() {
-  const r = race(), g = state.goalSeconds, laps = state.laps;
-  const tl = totalLaps(), cum = cumulative();
-  const barTotal = state.goalLocked ? g : tl;
-
-  const lockSvg = state.goalLocked
-    ? '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>'
-    : '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>';
-
-  document.getElementById('app').innerHTML = `
-    <div class="header">
-      <div class="header-top">
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-          <ellipse cx="14" cy="14" rx="12" ry="10" stroke="#FF6B4A" stroke-width="2.5" stroke-dasharray="4 3"/>
-          <circle cx="14" cy="4" r="3" fill="#FF6B4A"/>
-        </svg>
-        <span class="title">LAP SPLITTER</span>
-      </div>
-      <div class="subtitle">${r.distance}M · 4 LAPS · ${r.unit} EACH</div>
-    </div>
-
-    <div class="section">
-      <div class="label">RACE DISTANCE</div>
-      <div class="race-row">
-        ${[400,800,1600].map(d => `
-          <button class="race-btn ${state.raceKey===d?'active':''}" onclick="switchRace(${d})">
-            <span class="race-btn-distance">${d}m</span>
-            <span class="race-btn-detail">4 × ${RACES[d].lapDist}m</span>
-          </button>`).join('')}
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="goal-label-row">
-        <div class="label" style="margin-bottom:0">GOAL TIME</div>
-        <button class="lock-btn ${state.goalLocked?'locked':''}" onclick="state.goalLocked=!state.goalLocked;render()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${lockSvg}</svg>
-          <span>${state.goalLocked?'Locked':'Unlocked'}</span>
-        </button>
-      </div>
-      <div class="lock-hint">${state.goalLocked ? 'Adjusting a lap redistributes time across other laps' : 'Adjusting a lap changes the total time freely'}</div>
-      <div class="goal-row">
-        <div class="goal-input-wrap">
-          <input class="goal-input" id="goalInput" value="${state.goalInput}" placeholder="m:ss.00">
-          <span class="goal-unit">m:ss</span>
-        </div>
-        <div class="presets">
-          ${r.presets.map(p => `<button class="preset-btn ${g===p.s?'active':''}" onclick="applyGoal(${p.s});state.goalInput=fmt(${p.s});render()">${p.l}</button>`).join('')}
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="label">SPLIT STRATEGY</div>
-      <div class="strategy-row">
-        ${[{k:'even',l:'Even',i:'═'},{k:'negative',l:'Negative',i:'↗'},{k:'positive',l:'Positive',i:'↘'}].map(s =>
-          `<button class="strategy-btn ${state.strategy===s.k?'active':''}" onclick="applyStrategy('${s.k}')">
-            <span class="strategy-icon">${s.i}</span><span>${s.l}</span>
-          </button>`).join('')}
-        ${state.strategy==='custom'?'<div class="custom-badge">Custom</div>':''}
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="label">DRAG TO ADJUST SPLITS</div>
-      <div class="bar-container" id="splitBar">
-        ${laps.map((lap,i) => {
-          const pct = (lap / barTotal) * 100;
-          const br = i===0?'8px 0 0 8px':i===3?'0 8px 8px 0':'0';
-          return `<div class="bar-segment" style="width:${pct}%;background:${COLORS[i]};border-radius:${br};">
-            <span class="bar-label">${fmt(lap)}</span>
-            ${i<3?`<div class="bar-divider" data-idx="${i}"></div>`:''}
-          </div>`;
-        }).join('')}
-      </div>
-      <div class="bar-markers">${r.markers.map(m => `<span class="marker-text">${m}</span>`).join('')}</div>
-    </div>
-
-    <div class="section">
-      <div class="label">LAP TIMES</div>
-      <div class="lap-grid">
-        ${laps.map((lap,i) => {
-          const slMax = state.goalLocked ? Math.max(g-3,4) : g*2;
-          const pctFill = Math.min(100, ((lap-1)/(slMax-1))*100);
-          return `<div class="lap-card" style="border-top-color:${COLORS[i]};box-shadow:0 2px 8px rgba(0,0,0,0.15);">
-            <div class="lap-header">
-              <div class="lap-dot" style="background:${COLORS[i]}"></div>
-              <span class="lap-name">Lap ${i+1}</span>
-              <span class="lap-dist">${r.unit}</span>
-            </div>
-            <div class="lap-time">${fmt(lap)}</div>
-            <input type="range" class="lap-slider" min="1" max="${slMax}" step="0.1" value="${lap}"
-              oninput="handleLapChange(${i}, parseFloat(this.value))"
-              style="background:linear-gradient(to right,${COLORS[i]} 0%,${COLORS[i]} ${pctFill}%,#2a2a3a ${pctFill}%,#2a2a3a 100%)">
-            <div class="lap-meta">
-              <span class="lap-pace">${lapPace(lap)}/mi</span>
-              <span class="lap-cum">@ ${fmt(cum[i])}</span>
-            </div>
-          </div>`;
-        }).join('')}
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="label">RACE SUMMARY</div>
-      <div class="table">
-        <div class="table-header">
-          <span class="table-cell narrow">Lap</span>
-          <span class="table-cell">Split</span>
-          <span class="table-cell">Cumulative</span>
-          <span class="table-cell">Pace/mi</span>
-        </div>
-        ${laps.map((lap,i) => `
-          <div class="table-row">
-            <span class="table-cell narrow"><span class="table-dot" style="background:${COLORS[i]}"></span>${i+1}</span>
-            <span class="table-cell table-mono">${fmt(lap)}</span>
-            <span class="table-cell table-mono">${fmt(cum[i])}</span>
-            <span class="table-cell table-mono">${lapPace(lap)}</span>
-          </div>`).join('')}
-        <div class="table-total">
-          <span class="table-cell narrow table-bold">Total</span>
-          <span class="table-cell table-mono table-bold">${fmt(tl)}</span>
-          <span class="table-cell"></span>
-          <span class="table-cell table-mono table-bold">${totalPace(tl)}</span>
-        </div>
-      </div>
-    </div>
-  `;
-
-  // Reattach bar drag listeners
-  const bar = document.getElementById('splitBar');
-  if (bar) setupBarDrag(bar);
-
-  // Goal input listeners
-  const gi = document.getElementById('goalInput');
-  if (gi) {
-    gi.addEventListener('input', (e) => { state.goalInput = e.target.value; });
-    gi.addEventListener('blur', () => {
-      const s = parseT(state.goalInput);
-      if (s >= 10 && s <= 1200) { applyGoal(s); state.goalInput = fmt(s); render(); }
-    });
-    gi.addEventListener('keydown', (e) => { if (e.key === 'Enter') gi.blur(); });
-  }
-}
-
-render();
-
-// Register service worker
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
-}
-</script>
+        // Delete ALL caches
+        if ('caches' in window) {
+          var names = await caches.keys();
+          for (var i = 0; i < names.length; i++) {
+            await caches.delete(names[i]);
+          }
+        }
+        status.innerHTML = '<span class="done">All clear!</span><br><br>Redirecting to app...';
+        setTimeout(function() {
+          window.location.href = './index.html';
+        }, 1500);
+      } catch(e) {
+        status.innerHTML = 'Error: ' + e.message + '<br><br><a href="./index.html">Go to app manually</a>';
+      }
+    }
+    clearEverything();
+  </script>
 </body>
 </html>
