@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#0f0f1a">
+  <meta name="theme-color" id="metaTheme" content="#0f0f1a">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Lap Splitter">
@@ -13,146 +13,230 @@
   <title>Lap Splitter</title>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    /* ===== THEME VARIABLES ===== */
+    :root, [data-theme="dark"] {
+      --bg-grad-1: #0f0f1a;
+      --bg-grad-2: #1a1a2e;
+      --bg-grad-3: #16213e;
+      --text-primary: #fff;
+      --text-body: #e8e8f0;
+      --text-secondary: #ccc;
+      --text-muted: #999;
+      --text-faint: #666;
+      --text-faintest: #555;
+      --text-dim: #444;
+      --text-subtitle: #888;
+      --surface: #1a1a30;
+      --surface-alt: #14142a;
+      --surface-raised: #1a1a35;
+      --input-bg: #1e1e32;
+      --border: #2a2a45;
+      --border-light: #222240;
+      --border-row: #1a1a35;
+      --slider-track: #2a2a3a;
+      --slider-thumb: #fff;
+      --slider-thumb-border: #333;
+      --bar-label: #000;
+      --bar-label-shadow: rgba(255,255,255,0.2);
+      --card-shadow: rgba(0,0,0,0.15);
+      --accent: #FF6B4A;
+      --accent-bg: rgba(255,107,74,0.08);
+      --accent-glow: rgba(255,107,74,0.1);
+      --accent-lock-bg: rgba(255,107,74,0.07);
+      --accent-blue: #4DC9F6;
+      --accent-blue-bg: rgba(77,201,246,0.08);
+      --accent-purple: #9B6DFF;
+      --accent-purple-bg: rgba(155,109,255,0.08);
+      --theme-meta: #0f0f1a;
+    }
+
+    [data-theme="light"] {
+      --bg-grad-1: #f0f2f5;
+      --bg-grad-2: #e8ecf1;
+      --bg-grad-3: #dfe4eb;
+      --text-primary: #1a1a2e;
+      --text-body: #2c2c3e;
+      --text-secondary: #444;
+      --text-muted: #666;
+      --text-faint: #888;
+      --text-faintest: #999;
+      --text-dim: #aaa;
+      --text-subtitle: #777;
+      --surface: #fff;
+      --surface-alt: #f8f9fb;
+      --surface-raised: #f0f1f4;
+      --input-bg: #fff;
+      --border: #d0d4dc;
+      --border-light: #dde0e6;
+      --border-row: #eef0f3;
+      --slider-track: #d4d8e0;
+      --slider-thumb: #fff;
+      --slider-thumb-border: #bbb;
+      --bar-label: #fff;
+      --bar-label-shadow: rgba(0,0,0,0.25);
+      --card-shadow: rgba(0,0,0,0.06);
+      --accent: #E85A3A;
+      --accent-bg: rgba(232,90,58,0.1);
+      --accent-glow: rgba(232,90,58,0.12);
+      --accent-lock-bg: rgba(232,90,58,0.08);
+      --accent-blue: #2BA8D4;
+      --accent-blue-bg: rgba(43,168,212,0.1);
+      --accent-purple: #7C4DDB;
+      --accent-purple-bg: rgba(124,77,219,0.1);
+      --theme-meta: #f0f2f5;
+    }
+
+    /* ===== BASE STYLES ===== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { -webkit-text-size-adjust: 100%; }
     body {
       font-family: 'Outfit', sans-serif;
-      background: linear-gradient(145deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
-      color: #e8e8f0;
-      min-height: 100vh;
-      min-height: 100dvh;
+      background: linear-gradient(145deg, var(--bg-grad-1) 0%, var(--bg-grad-2) 50%, var(--bg-grad-3) 100%);
+      color: var(--text-body);
+      min-height: 100vh; min-height: 100dvh;
       padding: env(safe-area-inset-top) 20px 40px;
-      max-width: 600px;
-      margin: 0 auto;
-      -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
+      max-width: 600px; margin: 0 auto;
+      -webkit-font-smoothing: antialiased; overflow-x: hidden;
+      transition: background 0.35s, color 0.35s;
     }
     input:focus, button:focus { outline: none; }
     button { -webkit-tap-highlight-color: transparent; }
 
-    .header { text-align: center; margin-bottom: 28px; padding-top: 16px; }
+    /* ===== HEADER ===== */
+    .header { text-align: center; margin-bottom: 28px; padding-top: 16px; position: relative; }
     .header-top { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 4px; }
-    .title { font-family: 'Outfit', sans-serif; font-size: 28px; font-weight: 800; letter-spacing: 0.15em; color: #fff; }
-    .subtitle { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.25em; color: #888; }
+    .title { font-family: 'Outfit', sans-serif; font-size: 28px; font-weight: 800; letter-spacing: 0.15em; color: var(--text-primary); }
+    .subtitle { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.25em; color: var(--text-subtitle); }
 
+    /* Theme toggle */
+    .theme-toggle {
+      position: absolute; top: 16px; right: 0;
+      width: 40px; height: 40px; border-radius: 50%;
+      border: 1.5px solid var(--border); background: var(--surface);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all 0.3s; color: var(--text-muted);
+    }
+    .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+    .theme-toggle svg { width: 18px; height: 18px; }
+
+    /* ===== SECTIONS ===== */
     .section { margin-bottom: 24px; }
-    .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.2em; color: #666; font-weight: 600; margin-bottom: 10px; }
+    .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.2em; color: var(--text-faint); font-weight: 600; margin-bottom: 10px; }
 
+    /* ===== RACE SELECTOR ===== */
     .race-row { display: flex; gap: 8px; }
     .race-btn {
-      flex: 1; padding: 12px 8px; border: 1.5px solid #2a2a45; border-radius: 10px;
+      flex: 1; padding: 12px 8px; border: 1.5px solid var(--border); border-radius: 10px;
       background: transparent; cursor: pointer; display: flex; flex-direction: column;
-      align-items: center; gap: 2px; transition: all 0.25s; -webkit-tap-highlight-color: transparent;
+      align-items: center; gap: 2px; transition: all 0.25s;
     }
-    .race-btn.active { border-color: #FF6B4A; background: rgba(255,107,74,0.08); box-shadow: 0 0 20px rgba(255,107,74,0.1); }
-    .race-btn-distance { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; color: #fff; transition: color 0.25s; }
-    .race-btn.active .race-btn-distance { color: #FF6B4A; }
-    .race-btn-detail { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #666; letter-spacing: 0.05em; }
+    .race-btn.active { border-color: var(--accent); background: var(--accent-bg); box-shadow: 0 0 20px var(--accent-glow); }
+    .race-btn-distance { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; color: var(--text-primary); transition: color 0.25s; }
+    .race-btn.active .race-btn-distance { color: var(--accent); }
+    .race-btn-detail { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-faint); letter-spacing: 0.05em; }
 
+    /* ===== GOAL ===== */
     .goal-label-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
     .lock-btn {
       font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
-      letter-spacing: 0.05em; padding: 5px 12px; border: 1.5px solid #444;
+      letter-spacing: 0.05em; padding: 5px 12px; border: 1.5px solid var(--text-dim);
       border-radius: 8px; background: transparent; cursor: pointer;
-      display: flex; align-items: center; gap: 6px; transition: all 0.25s; color: #666;
+      display: flex; align-items: center; gap: 6px; transition: all 0.25s; color: var(--text-faint);
     }
-    .lock-btn.locked { border-color: #FF6B4A; color: #FF6B4A; background: rgba(255,107,74,0.07); }
-    .lock-hint { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #555; margin-bottom: 8px; font-style: italic; }
+    .lock-btn.locked { border-color: var(--accent); color: var(--accent); background: var(--accent-lock-bg); }
+    .lock-hint { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-faintest); margin-bottom: 8px; font-style: italic; }
     .goal-row { display: flex; flex-direction: column; gap: 10px; }
     .goal-input-wrap { position: relative; display: inline-flex; align-items: center; }
     .goal-input {
       font-family: 'JetBrains Mono', monospace; font-size: 32px; font-weight: 700;
-      color: #fff; background: #1e1e32; border: 2px solid #2a2a45; border-radius: 12px;
+      color: var(--text-primary); background: var(--input-bg); border: 2px solid var(--border); border-radius: 12px;
       padding: 10px 70px 10px 16px; width: 100%; max-width: 220px; transition: border-color 0.2s;
     }
-    .goal-input:focus { border-color: #FF6B4A; }
-    .goal-unit { position: absolute; right: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #555; }
+    .goal-input:focus { border-color: var(--accent); }
+    .goal-unit { position: absolute; right: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-faintest); }
     .presets { display: flex; gap: 6px; flex-wrap: wrap; }
     .preset-btn {
       font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500;
-      padding: 6px 14px; border: 1.5px solid #2a2a45; border-radius: 8px;
-      background: transparent; color: #999; cursor: pointer; transition: all 0.2s;
+      padding: 6px 14px; border: 1.5px solid var(--border); border-radius: 8px;
+      background: transparent; color: var(--text-muted); cursor: pointer; transition: all 0.2s;
     }
-    .preset-btn.active { border-color: #FF6B4A; color: #FF6B4A; background: rgba(255,107,74,0.08); }
+    .preset-btn.active { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
 
+    /* ===== STRATEGY ===== */
     .strategy-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
     .strategy-btn {
       font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 500;
-      padding: 8px 16px; border: 1.5px solid #2a2a45; border-radius: 8px;
-      background: transparent; color: #999; cursor: pointer;
+      padding: 8px 16px; border: 1.5px solid var(--border); border-radius: 8px;
+      background: transparent; color: var(--text-muted); cursor: pointer;
       display: flex; align-items: center; gap: 6px; transition: all 0.2s;
     }
-    .strategy-btn.active { border-color: #4DC9F6; color: #4DC9F6; background: rgba(77,201,246,0.08); }
+    .strategy-btn.active { border-color: var(--accent-blue); color: var(--accent-blue); background: var(--accent-blue-bg); }
     .strategy-icon { font-size: 16px; }
     .custom-badge {
       font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em;
-      color: #9B6DFF; background: rgba(155,109,255,0.08); padding: 4px 10px; border-radius: 6px;
+      color: var(--accent-purple); background: var(--accent-purple-bg); padding: 4px 10px; border-radius: 6px;
       font-weight: 600; display: none;
     }
     .custom-badge.show { display: block; }
 
+    /* ===== BAR ===== */
     .bar-container { display: flex; height: 52px; border-radius: 8px; overflow: visible; position: relative; cursor: col-resize; touch-action: none; }
-    .bar-segment {
-      display: flex; align-items: center; justify-content: center;
-      position: relative; transition: opacity 0.2s; min-width: 20px;
-    }
+    .bar-segment { display: flex; align-items: center; justify-content: center; position: relative; transition: opacity 0.2s; min-width: 20px; }
     .bar-label {
       font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
-      color: #000; text-shadow: 0 1px 2px rgba(255,255,255,0.2); pointer-events: none; white-space: nowrap;
+      color: var(--bar-label); text-shadow: 0 1px 2px var(--bar-label-shadow); pointer-events: none; white-space: nowrap;
     }
-    .bar-divider {
-      position: absolute; right: -8px; top: -6px; bottom: -6px; width: 16px;
-      cursor: col-resize; z-index: 10; touch-action: none;
-    }
+    .bar-divider { position: absolute; right: -8px; top: -6px; bottom: -6px; width: 16px; cursor: col-resize; z-index: 10; touch-action: none; }
     .bar-markers { display: flex; justify-content: space-between; margin-top: 6px; }
-    .marker-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #444; letter-spacing: 0.05em; }
+    .marker-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 0.05em; }
 
+    /* ===== LAP CARDS ===== */
     .lap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .lap-card {
-      background: #1a1a30; border-radius: 10px; padding: 14px 14px 12px;
+      background: var(--surface); border-radius: 10px; padding: 14px 14px 12px;
       transition: all 0.25s ease; border-top: 3px solid;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      box-shadow: 0 2px 8px var(--card-shadow);
     }
     .lap-header { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
     .lap-dot { width: 8px; height: 8px; border-radius: 50%; }
-    .lap-name { font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 600; color: #ccc; }
-    .lap-dist { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #555; margin-left: auto; }
-    .lap-time { font-family: 'JetBrains Mono', monospace; font-size: 26px; font-weight: 700; color: #fff; margin-bottom: 8px; letter-spacing: -0.02em; }
+    .lap-name { font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+    .lap-dist { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-faintest); margin-left: auto; }
+    .lap-time { font-family: 'JetBrains Mono', monospace; font-size: 26px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; letter-spacing: -0.02em; }
     .lap-slider {
       width: 100%; height: 6px; border-radius: 3px;
       -webkit-appearance: none; appearance: none; cursor: pointer; margin-bottom: 8px;
     }
     .lap-slider::-webkit-slider-thumb {
       -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%;
-      background: #fff; border: 2px solid #333; cursor: pointer; margin-top: -9px;
+      background: var(--slider-thumb); border: 2px solid var(--slider-thumb-border); cursor: pointer; margin-top: -9px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.4);
     }
     .lap-slider::-moz-range-thumb {
       width: 24px; height: 24px; border-radius: 50%;
-      background: #fff; border: 2px solid #333; cursor: pointer;
+      background: var(--slider-thumb); border: 2px solid var(--slider-thumb-border); cursor: pointer;
       box-shadow: 0 2px 6px rgba(0,0,0,0.4);
     }
     .lap-meta { display: flex; justify-content: space-between; align-items: center; }
-    .lap-pace { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #777; }
-    .lap-cum { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #555; }
+    .lap-pace { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-faint); }
+    .lap-cum { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-faintest); }
 
-    .table { background: #14142a; border-radius: 10px; overflow: hidden; border: 1px solid #222240; }
-    .table-header { display: flex; padding: 10px 14px; border-bottom: 1px solid #222240; }
+    /* ===== TABLE ===== */
+    .table { background: var(--surface-alt); border-radius: 10px; overflow: hidden; border: 1px solid var(--border-light); }
+    .table-header { display: flex; padding: 10px 14px; border-bottom: 1px solid var(--border-light); }
     .table-cell {
-      flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #666;
+      flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-faint);
       letter-spacing: 0.08em; font-weight: 600; display: flex; align-items: center; gap: 6px;
     }
     .table-cell.narrow { flex: 0.8; }
-    .table-row { display: flex; padding: 10px 14px; border-bottom: 1px solid #1a1a35; transition: background 0.15s; }
-    .table-mono { font-size: 13px; color: #ccc; font-weight: 500; }
+    .table-row { display: flex; padding: 10px 14px; border-bottom: 1px solid var(--border-row); transition: background 0.15s; }
+    .table-mono { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
     .table-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
-    .table-total { display: flex; padding: 12px 14px; background: #1a1a35; }
+    .table-total { display: flex; padding: 12px 14px; background: var(--surface-raised); }
     .table-bold { font-weight: 700; }
   </style>
 </head>
 <body>
 
-<!-- Static HTML skeleton - built once, updated by JS -->
 <div class="header">
   <div class="header-top">
     <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
@@ -162,6 +246,7 @@
     <span class="title">LAP SPLITTER</span>
   </div>
   <div class="subtitle" id="subtitle"></div>
+  <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
 </div>
 
 <div class="section">
@@ -215,6 +300,28 @@
 </div>
 
 <script>
+// ===== THEME =====
+const sunSVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+const moonSVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+
+function getTheme() {
+  try { return localStorage.getItem('lap-splitter-theme') || 'dark'; } catch(e) { return 'dark'; }
+}
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  document.getElementById('themeToggle').innerHTML = theme === 'dark' ? sunSVG : moonSVG;
+  document.getElementById('metaTheme').content = theme === 'dark' ? '#0f0f1a' : '#f0f2f5';
+  try { localStorage.setItem('lap-splitter-theme', theme); } catch(e) {}
+}
+
+// Apply saved theme immediately
+setTheme(getTheme());
+
+document.getElementById('themeToggle').addEventListener('click', () => {
+  setTheme(getTheme() === 'dark' ? 'light' : 'dark');
+});
+
+// ===== APP =====
 const RACES = {
   400: { distance: 400, lapDist: 100, unit: '100m', defaultGoal: 52,
     presets: [{l:'0:48',s:48},{l:'0:52',s:52},{l:'0:56',s:56},{l:'1:00',s:60},{l:'1:05',s:65}],
@@ -253,8 +360,6 @@ function cumulative() {
 function lapPace(t) { return fmt((t / race().lapDist) * 1609.34); }
 function totalPace(t) { return fmt((t / race().distance) * 1609.34); }
 
-// ========== ACTIONS (modify state, then call updateUI) ==========
-
 function switchRace(key) {
   const r = RACES[key];
   state.raceKey = key;
@@ -264,7 +369,7 @@ function switchRace(key) {
   state.laps = [b,b,b,b];
   state.strategy = 'even';
   state.goalLocked = true;
-  buildUI(); // full rebuild only on race switch
+  buildUI();
 }
 
 function applyGoal(secs) {
@@ -300,18 +405,14 @@ function handleLapChange(index, val) {
     state.goalInput = fmt(state.goalSeconds);
   }
   state.strategy = 'custom';
-  updateUI(); // <-- updates text only, sliders stay in DOM
+  updateUI();
 }
 
-// ========== BUILD UI (called once per race switch) ==========
-
+// ===== BUILD UI =====
 function buildUI() {
   const r = race();
-
-  // Subtitle
   document.getElementById('subtitle').textContent = r.distance + 'M \u00B7 4 LAPS \u00B7 ' + r.unit + ' EACH';
 
-  // Race buttons
   let html = '';
   [400,800,1600].forEach(d => {
     html += '<button type="button" class="race-btn' + (state.raceKey===d?' active':'') + '" data-d="' + d + '">';
@@ -323,7 +424,6 @@ function buildUI() {
     btn.addEventListener('click', () => switchRace(parseInt(btn.dataset.d)));
   });
 
-  // Presets
   html = '';
   r.presets.forEach(p => {
     html += '<button type="button" class="preset-btn" data-s="' + p.s + '">' + p.l + '</button>';
@@ -333,7 +433,6 @@ function buildUI() {
     btn.addEventListener('click', () => applyGoal(parseInt(btn.dataset.s)));
   });
 
-  // Strategy
   html = '';
   [{k:'even',l:'Even',i:'\u2550'},{k:'negative',l:'Negative',i:'\u2197'},{k:'positive',l:'Positive',i:'\u2198'}].forEach(s => {
     html += '<button type="button" class="strategy-btn" data-s="' + s.k + '"><span class="strategy-icon">' + s.i + '</span><span>' + s.l + '</span></button>';
@@ -344,14 +443,12 @@ function buildUI() {
     btn.addEventListener('click', () => applyStrategy(btn.dataset.s));
   });
 
-  // Lock button - clone to clear old listeners
   const oldLock = document.getElementById('lockBtn');
   const newLock = oldLock.cloneNode(false);
   oldLock.parentNode.replaceChild(newLock, oldLock);
   newLock.id = 'lockBtn'; newLock.type = 'button';
   newLock.addEventListener('click', () => { state.goalLocked = !state.goalLocked; updateUI(); });
 
-  // Goal input - clone to clear old listeners
   const oldGi = document.getElementById('goalInput');
   const newGi = oldGi.cloneNode(false);
   oldGi.parentNode.replaceChild(newGi, oldGi);
@@ -364,12 +461,10 @@ function buildUI() {
   });
   newGi.addEventListener('keydown', e => { if (e.key === 'Enter') e.target.blur(); });
 
-  // Bar markers
   html = '';
   r.markers.forEach(m => { html += '<span class="marker-text">' + m + '</span>'; });
   document.getElementById('barMarkers').innerHTML = html;
 
-  // Bar segments
   html = '';
   for (let i = 0; i < 4; i++) {
     const br = i===0 ? 'border-radius:8px 0 0 8px;' : i===3 ? 'border-radius:0 8px 8px 0;' : '';
@@ -381,7 +476,6 @@ function buildUI() {
   document.getElementById('splitBar').innerHTML = html;
   setupBarDrag(document.getElementById('splitBar'));
 
-  // Lap cards - sliders get created here and NEVER destroyed during drag
   html = '';
   for (let i = 0; i < 4; i++) {
     html += '<div class="lap-card" style="border-top-color:' + COLORS[i] + ';">';
@@ -394,15 +488,12 @@ function buildUI() {
     html += '<span class="lap-cum" id="lapCum' + i + '"></span></div></div>';
   }
   document.getElementById('lapGrid').innerHTML = html;
-
-  // Attach slider listeners - these persist until next race switch
   for (let i = 0; i < 4; i++) {
     document.getElementById('lapSlider' + i).addEventListener('input', function() {
       handleLapChange(i, parseFloat(this.value));
     });
   }
 
-  // Table rows
   html = '';
   for (let i = 0; i < 4; i++) {
     html += '<div class="table-row">';
@@ -421,14 +512,12 @@ function buildUI() {
   updateUI();
 }
 
-// ========== UPDATE UI (called on every change - only touches text, never rebuilds sliders) ==========
-
+// ===== UPDATE UI =====
 function updateUI() {
   const r = race(), g = state.goalSeconds, L = state.laps;
   const tl = totalLaps(), c = cumulative();
   const barTotal = state.goalLocked ? g : tl;
 
-  // Lock button
   const lb = document.getElementById('lockBtn');
   lb.className = 'lock-btn' + (state.goalLocked ? ' locked' : '');
   const lockPath = state.goalLocked
@@ -440,44 +529,35 @@ function updateUI() {
     ? 'Adjusting a lap redistributes time across other laps'
     : 'Adjusting a lap changes the total time freely';
 
-  // Goal input - only update if user isn't typing in it
   const gi = document.getElementById('goalInput');
   if (document.activeElement !== gi) gi.value = fmt(g);
 
-  // Preset highlights
   document.querySelectorAll('.preset-btn').forEach(b => {
     b.classList.toggle('active', parseInt(b.dataset.s) === g);
   });
-
-  // Strategy highlights
   document.querySelectorAll('.strategy-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.s === state.strategy);
   });
   const cb = document.getElementById('customBadge');
   if (cb) cb.classList.toggle('show', state.strategy === 'custom');
 
-  // Bar + Lap cards + Table
+  const sliderTrack = getComputedStyle(document.documentElement).getPropertyValue('--slider-track').trim();
+
   for (let i = 0; i < 4; i++) {
-    // Bar segment
     document.getElementById('barSeg' + i).style.width = ((L[i] / barTotal) * 100) + '%';
     document.getElementById('barLbl' + i).textContent = fmt(L[i]);
 
-    // Lap time text
     document.getElementById('lapTime' + i).textContent = fmt(L[i]);
     document.getElementById('lapPace' + i).textContent = lapPace(L[i]) + '/mi';
     document.getElementById('lapCum' + i).textContent = '@ ' + fmt(c[i]);
 
-    // Slider - update range and visual, but NEVER set .value if user is touching it
     const sl = document.getElementById('lapSlider' + i);
     const slMax = state.goalLocked ? Math.max(g - 3, 4) : Math.max(g * 2, 60);
     sl.max = slMax;
-    if (document.activeElement !== sl) {
-      sl.value = L[i];
-    }
+    if (document.activeElement !== sl) sl.value = L[i];
     const fill = Math.min(100, Math.max(0, ((L[i] - 1) / (slMax - 1)) * 100));
-    sl.style.background = 'linear-gradient(to right,' + COLORS[i] + ' 0%,' + COLORS[i] + ' ' + fill + '%,#2a2a3a ' + fill + '%,#2a2a3a 100%)';
+    sl.style.background = 'linear-gradient(to right,' + COLORS[i] + ' 0%,' + COLORS[i] + ' ' + fill + '%,' + sliderTrack + ' ' + fill + '%,' + sliderTrack + ' 100%)';
 
-    // Table
     document.getElementById('tSplit' + i).textContent = fmt(L[i]);
     document.getElementById('tCum' + i).textContent = fmt(c[i]);
     document.getElementById('tPace' + i).textContent = lapPace(L[i]);
@@ -487,8 +567,7 @@ function updateUI() {
   document.getElementById('tTotalPace').textContent = totalPace(tl);
 }
 
-// ========== BAR DRAG ==========
-
+// ===== BAR DRAG =====
 function setupBarDrag(barEl) {
   for (let idx = 0; idx < 3; idx++) {
     const divider = barEl.querySelector('.bar-divider[data-idx="' + idx + '"]');
@@ -529,7 +608,7 @@ function setupBarDrag(barEl) {
   }
 }
 
-// ========== INIT ==========
+// ===== INIT =====
 buildUI();
 
 if ('serviceWorker' in navigator) {
