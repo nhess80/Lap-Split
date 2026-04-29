@@ -348,8 +348,21 @@ function fmt(t) {
   return m + ':' + String(ws).padStart(2,'0') + '.' + String(h).padStart(2,'0');
 }
 function parseT(str) {
-  const c = str.replace(/[^0-9:.]/g, ''), p = c.split(':');
-  if (p.length === 2) return (parseInt(p[0])||0)*60 + (parseFloat(p[1])||0);
+  const c = str.replace(/[^0-9:.]/g, '');
+  // If it has a colon or dot, parse normally
+  if (c.includes(':') || c.includes('.')) {
+    const p = c.split(':');
+    if (p.length === 2) return (parseInt(p[0])||0)*60 + (parseFloat(p[1])||0);
+    return parseFloat(c) || 0;
+  }
+  // Pure digits: treat as MMSSCC (pad to 6 from right)
+  if (/^\d+$/.test(c) && c.length >= 3) {
+    const padded = c.padStart(6, '0');
+    const mins = parseInt(padded.slice(0, -4)) || 0;
+    const secs = parseInt(padded.slice(-4, -2)) || 0;
+    const hund = parseInt(padded.slice(-2)) || 0;
+    return mins * 60 + secs + hund / 100;
+  }
   return parseFloat(c) || 0;
 }
 
