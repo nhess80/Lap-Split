@@ -30,17 +30,14 @@
     input:focus, button:focus { outline: none; }
     button { -webkit-tap-highlight-color: transparent; }
 
-    /* Header */
     .header { text-align: center; margin-bottom: 28px; padding-top: 16px; }
     .header-top { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 4px; }
     .title { font-family: 'Outfit', sans-serif; font-size: 28px; font-weight: 800; letter-spacing: 0.15em; color: #fff; }
     .subtitle { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.25em; color: #888; }
 
-    /* Sections */
     .section { margin-bottom: 24px; }
     .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.2em; color: #666; font-weight: 600; margin-bottom: 10px; }
 
-    /* Race selector */
     .race-row { display: flex; gap: 8px; }
     .race-btn {
       flex: 1; padding: 12px 8px; border: 1.5px solid #2a2a45; border-radius: 10px;
@@ -52,7 +49,6 @@
     .race-btn.active .race-btn-distance { color: #FF6B4A; }
     .race-btn-detail { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #666; letter-spacing: 0.05em; }
 
-    /* Goal */
     .goal-label-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
     .lock-btn {
       font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
@@ -79,7 +75,6 @@
     }
     .preset-btn.active { border-color: #FF6B4A; color: #FF6B4A; background: rgba(255,107,74,0.08); }
 
-    /* Strategy */
     .strategy-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
     .strategy-btn {
       font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 500;
@@ -91,10 +86,11 @@
     .strategy-icon { font-size: 16px; }
     .custom-badge {
       font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em;
-      color: #9B6DFF; background: rgba(155,109,255,0.08); padding: 4px 10px; border-radius: 6px; font-weight: 600;
+      color: #9B6DFF; background: rgba(155,109,255,0.08); padding: 4px 10px; border-radius: 6px;
+      font-weight: 600; display: none;
     }
+    .custom-badge.show { display: block; }
 
-    /* Bar */
     .bar-container { display: flex; height: 52px; border-radius: 8px; overflow: visible; position: relative; cursor: col-resize; touch-action: none; }
     .bar-segment {
       display: flex; align-items: center; justify-content: center;
@@ -111,13 +107,12 @@
     .bar-markers { display: flex; justify-content: space-between; margin-top: 6px; }
     .marker-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #444; letter-spacing: 0.05em; }
 
-    /* Lap cards */
     .lap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .lap-card {
       background: #1a1a30; border-radius: 10px; padding: 14px 14px 12px;
       transition: all 0.25s ease; border-top: 3px solid;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
-    .lap-card.highlight { transform: translateY(-2px); }
     .lap-header { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
     .lap-dot { width: 8px; height: 8px; border-radius: 50%; }
     .lap-name { font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 600; color: #ccc; }
@@ -128,18 +123,19 @@
       -webkit-appearance: none; appearance: none; cursor: pointer; margin-bottom: 8px;
     }
     .lap-slider::-webkit-slider-thumb {
-      -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%;
-      background: #fff; border: 2px solid #333; cursor: pointer; margin-top: -6px;
+      -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%;
+      background: #fff; border: 2px solid #333; cursor: pointer; margin-top: -9px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
     }
     .lap-slider::-moz-range-thumb {
-      width: 18px; height: 18px; border-radius: 50%;
+      width: 24px; height: 24px; border-radius: 50%;
       background: #fff; border: 2px solid #333; cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
     }
     .lap-meta { display: flex; justify-content: space-between; align-items: center; }
     .lap-pace { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #777; }
     .lap-cum { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #555; }
 
-    /* Table */
     .table { background: #14142a; border-radius: 10px; overflow: hidden; border: 1px solid #222240; }
     .table-header { display: flex; padding: 10px 14px; border-bottom: 1px solid #222240; }
     .table-cell {
@@ -156,7 +152,67 @@
 </head>
 <body>
 
-<div id="app"></div>
+<!-- Static HTML skeleton - built once, updated by JS -->
+<div class="header">
+  <div class="header-top">
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <ellipse cx="14" cy="14" rx="12" ry="10" stroke="#FF6B4A" stroke-width="2.5" stroke-dasharray="4 3"/>
+      <circle cx="14" cy="4" r="3" fill="#FF6B4A"/>
+    </svg>
+    <span class="title">LAP SPLITTER</span>
+  </div>
+  <div class="subtitle" id="subtitle"></div>
+</div>
+
+<div class="section">
+  <div class="label">RACE DISTANCE</div>
+  <div class="race-row" id="raceRow"></div>
+</div>
+
+<div class="section">
+  <div class="goal-label-row">
+    <div class="label" style="margin-bottom:0">GOAL TIME</div>
+    <button type="button" class="lock-btn" id="lockBtn"></button>
+  </div>
+  <div class="lock-hint" id="lockHint"></div>
+  <div class="goal-row">
+    <div class="goal-input-wrap">
+      <input class="goal-input" id="goalInput" placeholder="m:ss.00" inputmode="decimal" autocomplete="off">
+      <span class="goal-unit">m:ss</span>
+    </div>
+    <div class="presets" id="presetsRow"></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="label">SPLIT STRATEGY</div>
+  <div class="strategy-row" id="strategyRow"></div>
+</div>
+
+<div class="section">
+  <div class="label">DRAG TO ADJUST SPLITS</div>
+  <div class="bar-container" id="splitBar"></div>
+  <div class="bar-markers" id="barMarkers"></div>
+</div>
+
+<div class="section">
+  <div class="label">LAP TIMES</div>
+  <div class="lap-grid" id="lapGrid"></div>
+</div>
+
+<div class="section">
+  <div class="label">RACE SUMMARY</div>
+  <div class="table">
+    <div class="table-header">
+      <span class="table-cell narrow">Lap</span>
+      <span class="table-cell">Split</span>
+      <span class="table-cell">Cumulative</span>
+      <span class="table-cell">Pace/mi</span>
+    </div>
+    <div id="tableBody"></div>
+    <div class="table-total" id="tableFoot"></div>
+  </div>
+</div>
 
 <script>
 const RACES = {
@@ -185,14 +241,19 @@ function parseT(str) {
 
 let state = {
   raceKey: 1600, goalSeconds: 300, goalInput: '5:00.00',
-  laps: [75,75,75,75], strategy: 'even', goalLocked: true, activeLap: null
+  laps: [75,75,75,75], strategy: 'even', goalLocked: true
 };
 
 function race() { return RACES[state.raceKey]; }
-function totalLaps() { return state.laps.reduce((a,b) => a+b, 0); }
-function cumulative() { let c = []; state.laps.reduce((a,b,i) => { c.push(a+b); return a+b; }, 0); return c; }
+function totalLaps() { return state.laps[0]+state.laps[1]+state.laps[2]+state.laps[3]; }
+function cumulative() {
+  const a = state.laps;
+  return [a[0], a[0]+a[1], a[0]+a[1]+a[2], a[0]+a[1]+a[2]+a[3]];
+}
 function lapPace(t) { return fmt((t / race().lapDist) * 1609.34); }
 function totalPace(t) { return fmt((t / race().distance) * 1609.34); }
+
+// ========== ACTIONS (modify state, then call updateUI) ==========
 
 function switchRace(key) {
   const r = RACES[key];
@@ -203,23 +264,27 @@ function switchRace(key) {
   state.laps = [b,b,b,b];
   state.strategy = 'even';
   state.goalLocked = true;
-  render();
+  buildUI(); // full rebuild only on race switch
 }
+
 function applyGoal(secs) {
   state.goalSeconds = secs;
+  state.goalInput = fmt(secs);
   const b = secs / 4;
   state.laps = [b,b,b,b];
   state.strategy = 'even';
-  render();
+  updateUI();
 }
+
 function applyStrategy(type) {
   state.strategy = type;
-  const g = state.goalSeconds, avg = g / 4;
+  const avg = state.goalSeconds / 4;
   if (type === 'even') state.laps = [avg,avg,avg,avg];
   else if (type === 'negative') state.laps = [avg*1.08, avg*1.03, avg*0.97, avg*0.92];
   else if (type === 'positive') state.laps = [avg*0.92, avg*0.97, avg*1.03, avg*1.08];
-  render();
+  updateUI();
 }
+
 function handleLapChange(index, val) {
   if (state.goalLocked) {
     const clamped = Math.max(0.5, Math.min(state.goalSeconds - 1.5, val));
@@ -231,17 +296,202 @@ function handleLapChange(index, val) {
     else others.forEach(i => { state.laps[i] = remaining / 3; });
   } else {
     state.laps[index] = Math.max(0.5, Math.min(600, val));
-    const t = totalLaps();
-    state.goalSeconds = t;
-    state.goalInput = fmt(t);
+    state.goalSeconds = totalLaps();
+    state.goalInput = fmt(state.goalSeconds);
   }
   state.strategy = 'custom';
-  render();
+  updateUI(); // <-- updates text only, sliders stay in DOM
 }
+
+// ========== BUILD UI (called once per race switch) ==========
+
+function buildUI() {
+  const r = race();
+
+  // Subtitle
+  document.getElementById('subtitle').textContent = r.distance + 'M \u00B7 4 LAPS \u00B7 ' + r.unit + ' EACH';
+
+  // Race buttons
+  let html = '';
+  [400,800,1600].forEach(d => {
+    html += '<button type="button" class="race-btn' + (state.raceKey===d?' active':'') + '" data-d="' + d + '">';
+    html += '<span class="race-btn-distance">' + d + 'm</span>';
+    html += '<span class="race-btn-detail">4 \u00D7 ' + RACES[d].lapDist + 'm</span></button>';
+  });
+  document.getElementById('raceRow').innerHTML = html;
+  document.querySelectorAll('.race-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchRace(parseInt(btn.dataset.d)));
+  });
+
+  // Presets
+  html = '';
+  r.presets.forEach(p => {
+    html += '<button type="button" class="preset-btn" data-s="' + p.s + '">' + p.l + '</button>';
+  });
+  document.getElementById('presetsRow').innerHTML = html;
+  document.querySelectorAll('.preset-btn').forEach(btn => {
+    btn.addEventListener('click', () => applyGoal(parseInt(btn.dataset.s)));
+  });
+
+  // Strategy
+  html = '';
+  [{k:'even',l:'Even',i:'\u2550'},{k:'negative',l:'Negative',i:'\u2197'},{k:'positive',l:'Positive',i:'\u2198'}].forEach(s => {
+    html += '<button type="button" class="strategy-btn" data-s="' + s.k + '"><span class="strategy-icon">' + s.i + '</span><span>' + s.l + '</span></button>';
+  });
+  html += '<div class="custom-badge" id="customBadge">Custom</div>';
+  document.getElementById('strategyRow').innerHTML = html;
+  document.querySelectorAll('.strategy-btn').forEach(btn => {
+    btn.addEventListener('click', () => applyStrategy(btn.dataset.s));
+  });
+
+  // Lock button - clone to clear old listeners
+  const oldLock = document.getElementById('lockBtn');
+  const newLock = oldLock.cloneNode(false);
+  oldLock.parentNode.replaceChild(newLock, oldLock);
+  newLock.id = 'lockBtn'; newLock.type = 'button';
+  newLock.addEventListener('click', () => { state.goalLocked = !state.goalLocked; updateUI(); });
+
+  // Goal input - clone to clear old listeners
+  const oldGi = document.getElementById('goalInput');
+  const newGi = oldGi.cloneNode(false);
+  oldGi.parentNode.replaceChild(newGi, oldGi);
+  newGi.id = 'goalInput';
+  newGi.value = state.goalInput;
+  newGi.addEventListener('input', e => { state.goalInput = e.target.value; });
+  newGi.addEventListener('blur', () => {
+    const s = parseT(state.goalInput);
+    if (s >= 10 && s <= 1200) applyGoal(s);
+  });
+  newGi.addEventListener('keydown', e => { if (e.key === 'Enter') e.target.blur(); });
+
+  // Bar markers
+  html = '';
+  r.markers.forEach(m => { html += '<span class="marker-text">' + m + '</span>'; });
+  document.getElementById('barMarkers').innerHTML = html;
+
+  // Bar segments
+  html = '';
+  for (let i = 0; i < 4; i++) {
+    const br = i===0 ? 'border-radius:8px 0 0 8px;' : i===3 ? 'border-radius:0 8px 8px 0;' : '';
+    html += '<div class="bar-segment" id="barSeg' + i + '" style="background:' + COLORS[i] + ';' + br + '">';
+    html += '<span class="bar-label" id="barLbl' + i + '"></span>';
+    if (i < 3) html += '<div class="bar-divider" data-idx="' + i + '"></div>';
+    html += '</div>';
+  }
+  document.getElementById('splitBar').innerHTML = html;
+  setupBarDrag(document.getElementById('splitBar'));
+
+  // Lap cards - sliders get created here and NEVER destroyed during drag
+  html = '';
+  for (let i = 0; i < 4; i++) {
+    html += '<div class="lap-card" style="border-top-color:' + COLORS[i] + ';">';
+    html += '<div class="lap-header"><div class="lap-dot" style="background:' + COLORS[i] + '"></div>';
+    html += '<span class="lap-name">Lap ' + (i+1) + '</span>';
+    html += '<span class="lap-dist" id="lapDist' + i + '">' + r.unit + '</span></div>';
+    html += '<div class="lap-time" id="lapTime' + i + '"></div>';
+    html += '<input type="range" class="lap-slider" id="lapSlider' + i + '" min="1" step="0.1">';
+    html += '<div class="lap-meta"><span class="lap-pace" id="lapPace' + i + '"></span>';
+    html += '<span class="lap-cum" id="lapCum' + i + '"></span></div></div>';
+  }
+  document.getElementById('lapGrid').innerHTML = html;
+
+  // Attach slider listeners - these persist until next race switch
+  for (let i = 0; i < 4; i++) {
+    document.getElementById('lapSlider' + i).addEventListener('input', function() {
+      handleLapChange(i, parseFloat(this.value));
+    });
+  }
+
+  // Table rows
+  html = '';
+  for (let i = 0; i < 4; i++) {
+    html += '<div class="table-row">';
+    html += '<span class="table-cell narrow"><span class="table-dot" style="background:' + COLORS[i] + '"></span>' + (i+1) + '</span>';
+    html += '<span class="table-cell table-mono" id="tSplit' + i + '"></span>';
+    html += '<span class="table-cell table-mono" id="tCum' + i + '"></span>';
+    html += '<span class="table-cell table-mono" id="tPace' + i + '"></span></div>';
+  }
+  document.getElementById('tableBody').innerHTML = html;
+  document.getElementById('tableFoot').innerHTML =
+    '<span class="table-cell narrow table-bold">Total</span>' +
+    '<span class="table-cell table-mono table-bold" id="tTotal"></span>' +
+    '<span class="table-cell"></span>' +
+    '<span class="table-cell table-mono table-bold" id="tTotalPace"></span>';
+
+  updateUI();
+}
+
+// ========== UPDATE UI (called on every change - only touches text, never rebuilds sliders) ==========
+
+function updateUI() {
+  const r = race(), g = state.goalSeconds, L = state.laps;
+  const tl = totalLaps(), c = cumulative();
+  const barTotal = state.goalLocked ? g : tl;
+
+  // Lock button
+  const lb = document.getElementById('lockBtn');
+  lb.className = 'lock-btn' + (state.goalLocked ? ' locked' : '');
+  const lockPath = state.goalLocked
+    ? '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>'
+    : '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>';
+  lb.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' + lockPath + '</svg><span>' + (state.goalLocked ? 'Locked' : 'Unlocked') + '</span>';
+
+  document.getElementById('lockHint').textContent = state.goalLocked
+    ? 'Adjusting a lap redistributes time across other laps'
+    : 'Adjusting a lap changes the total time freely';
+
+  // Goal input - only update if user isn't typing in it
+  const gi = document.getElementById('goalInput');
+  if (document.activeElement !== gi) gi.value = fmt(g);
+
+  // Preset highlights
+  document.querySelectorAll('.preset-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.s) === g);
+  });
+
+  // Strategy highlights
+  document.querySelectorAll('.strategy-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.s === state.strategy);
+  });
+  const cb = document.getElementById('customBadge');
+  if (cb) cb.classList.toggle('show', state.strategy === 'custom');
+
+  // Bar + Lap cards + Table
+  for (let i = 0; i < 4; i++) {
+    // Bar segment
+    document.getElementById('barSeg' + i).style.width = ((L[i] / barTotal) * 100) + '%';
+    document.getElementById('barLbl' + i).textContent = fmt(L[i]);
+
+    // Lap time text
+    document.getElementById('lapTime' + i).textContent = fmt(L[i]);
+    document.getElementById('lapPace' + i).textContent = lapPace(L[i]) + '/mi';
+    document.getElementById('lapCum' + i).textContent = '@ ' + fmt(c[i]);
+
+    // Slider - update range and visual, but NEVER set .value if user is touching it
+    const sl = document.getElementById('lapSlider' + i);
+    const slMax = state.goalLocked ? Math.max(g - 3, 4) : Math.max(g * 2, 60);
+    sl.max = slMax;
+    if (document.activeElement !== sl) {
+      sl.value = L[i];
+    }
+    const fill = Math.min(100, Math.max(0, ((L[i] - 1) / (slMax - 1)) * 100));
+    sl.style.background = 'linear-gradient(to right,' + COLORS[i] + ' 0%,' + COLORS[i] + ' ' + fill + '%,#2a2a3a ' + fill + '%,#2a2a3a 100%)';
+
+    // Table
+    document.getElementById('tSplit' + i).textContent = fmt(L[i]);
+    document.getElementById('tCum' + i).textContent = fmt(c[i]);
+    document.getElementById('tPace' + i).textContent = lapPace(L[i]);
+  }
+
+  document.getElementById('tTotal').textContent = fmt(tl);
+  document.getElementById('tTotalPace').textContent = totalPace(tl);
+}
+
+// ========== BAR DRAG ==========
 
 function setupBarDrag(barEl) {
   for (let idx = 0; idx < 3; idx++) {
-    const divider = barEl.querySelector(`.bar-divider[data-idx="${idx}"]`);
+    const divider = barEl.querySelector('.bar-divider[data-idx="' + idx + '"]');
     if (!divider) continue;
     const start = (e) => {
       e.preventDefault();
@@ -249,6 +499,7 @@ function setupBarDrag(barEl) {
       const w = rect.width;
       const dragTotal = state.goalLocked ? state.goalSeconds : totalLaps();
       const move = (ev) => {
+        ev.preventDefault();
         const cx = ev.touches ? ev.touches[0].clientX : ev.clientX;
         const frac = Math.max(0.02, Math.min(0.98, (cx - rect.left) / w));
         const prev = state.laps.slice(0, idx).reduce((a,b) => a+b, 0);
@@ -259,7 +510,7 @@ function setupBarDrag(barEl) {
           state.laps[idx] = nv;
           state.laps[idx+1] -= delta;
           state.strategy = 'custom';
-          render();
+          updateUI();
         }
       };
       const up = () => {
@@ -278,154 +529,9 @@ function setupBarDrag(barEl) {
   }
 }
 
-function render() {
-  const r = race(), g = state.goalSeconds, laps = state.laps;
-  const tl = totalLaps(), cum = cumulative();
-  const barTotal = state.goalLocked ? g : tl;
+// ========== INIT ==========
+buildUI();
 
-  const lockSvg = state.goalLocked
-    ? '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>'
-    : '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>';
-
-  document.getElementById('app').innerHTML = `
-    <div class="header">
-      <div class="header-top">
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-          <ellipse cx="14" cy="14" rx="12" ry="10" stroke="#FF6B4A" stroke-width="2.5" stroke-dasharray="4 3"/>
-          <circle cx="14" cy="4" r="3" fill="#FF6B4A"/>
-        </svg>
-        <span class="title">LAP SPLITTER</span>
-      </div>
-      <div class="subtitle">${r.distance}M · 4 LAPS · ${r.unit} EACH</div>
-    </div>
-
-    <div class="section">
-      <div class="label">RACE DISTANCE</div>
-      <div class="race-row">
-        ${[400,800,1600].map(d => `
-          <button class="race-btn ${state.raceKey===d?'active':''}" onclick="switchRace(${d})">
-            <span class="race-btn-distance">${d}m</span>
-            <span class="race-btn-detail">4 × ${RACES[d].lapDist}m</span>
-          </button>`).join('')}
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="goal-label-row">
-        <div class="label" style="margin-bottom:0">GOAL TIME</div>
-        <button class="lock-btn ${state.goalLocked?'locked':''}" onclick="state.goalLocked=!state.goalLocked;render()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${lockSvg}</svg>
-          <span>${state.goalLocked?'Locked':'Unlocked'}</span>
-        </button>
-      </div>
-      <div class="lock-hint">${state.goalLocked ? 'Adjusting a lap redistributes time across other laps' : 'Adjusting a lap changes the total time freely'}</div>
-      <div class="goal-row">
-        <div class="goal-input-wrap">
-          <input class="goal-input" id="goalInput" value="${state.goalInput}" placeholder="m:ss.00">
-          <span class="goal-unit">m:ss</span>
-        </div>
-        <div class="presets">
-          ${r.presets.map(p => `<button class="preset-btn ${g===p.s?'active':''}" onclick="applyGoal(${p.s});state.goalInput=fmt(${p.s});render()">${p.l}</button>`).join('')}
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="label">SPLIT STRATEGY</div>
-      <div class="strategy-row">
-        ${[{k:'even',l:'Even',i:'═'},{k:'negative',l:'Negative',i:'↗'},{k:'positive',l:'Positive',i:'↘'}].map(s =>
-          `<button class="strategy-btn ${state.strategy===s.k?'active':''}" onclick="applyStrategy('${s.k}')">
-            <span class="strategy-icon">${s.i}</span><span>${s.l}</span>
-          </button>`).join('')}
-        ${state.strategy==='custom'?'<div class="custom-badge">Custom</div>':''}
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="label">DRAG TO ADJUST SPLITS</div>
-      <div class="bar-container" id="splitBar">
-        ${laps.map((lap,i) => {
-          const pct = (lap / barTotal) * 100;
-          const br = i===0?'8px 0 0 8px':i===3?'0 8px 8px 0':'0';
-          return `<div class="bar-segment" style="width:${pct}%;background:${COLORS[i]};border-radius:${br};">
-            <span class="bar-label">${fmt(lap)}</span>
-            ${i<3?`<div class="bar-divider" data-idx="${i}"></div>`:''}
-          </div>`;
-        }).join('')}
-      </div>
-      <div class="bar-markers">${r.markers.map(m => `<span class="marker-text">${m}</span>`).join('')}</div>
-    </div>
-
-    <div class="section">
-      <div class="label">LAP TIMES</div>
-      <div class="lap-grid">
-        ${laps.map((lap,i) => {
-          const slMax = state.goalLocked ? Math.max(g-3,4) : g*2;
-          const pctFill = Math.min(100, ((lap-1)/(slMax-1))*100);
-          return `<div class="lap-card" style="border-top-color:${COLORS[i]};box-shadow:0 2px 8px rgba(0,0,0,0.15);">
-            <div class="lap-header">
-              <div class="lap-dot" style="background:${COLORS[i]}"></div>
-              <span class="lap-name">Lap ${i+1}</span>
-              <span class="lap-dist">${r.unit}</span>
-            </div>
-            <div class="lap-time">${fmt(lap)}</div>
-            <input type="range" class="lap-slider" min="1" max="${slMax}" step="0.1" value="${lap}"
-              oninput="handleLapChange(${i}, parseFloat(this.value))"
-              style="background:linear-gradient(to right,${COLORS[i]} 0%,${COLORS[i]} ${pctFill}%,#2a2a3a ${pctFill}%,#2a2a3a 100%)">
-            <div class="lap-meta">
-              <span class="lap-pace">${lapPace(lap)}/mi</span>
-              <span class="lap-cum">@ ${fmt(cum[i])}</span>
-            </div>
-          </div>`;
-        }).join('')}
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="label">RACE SUMMARY</div>
-      <div class="table">
-        <div class="table-header">
-          <span class="table-cell narrow">Lap</span>
-          <span class="table-cell">Split</span>
-          <span class="table-cell">Cumulative</span>
-          <span class="table-cell">Pace/mi</span>
-        </div>
-        ${laps.map((lap,i) => `
-          <div class="table-row">
-            <span class="table-cell narrow"><span class="table-dot" style="background:${COLORS[i]}"></span>${i+1}</span>
-            <span class="table-cell table-mono">${fmt(lap)}</span>
-            <span class="table-cell table-mono">${fmt(cum[i])}</span>
-            <span class="table-cell table-mono">${lapPace(lap)}</span>
-          </div>`).join('')}
-        <div class="table-total">
-          <span class="table-cell narrow table-bold">Total</span>
-          <span class="table-cell table-mono table-bold">${fmt(tl)}</span>
-          <span class="table-cell"></span>
-          <span class="table-cell table-mono table-bold">${totalPace(tl)}</span>
-        </div>
-      </div>
-    </div>
-  `;
-
-  // Reattach bar drag listeners
-  const bar = document.getElementById('splitBar');
-  if (bar) setupBarDrag(bar);
-
-  // Goal input listeners
-  const gi = document.getElementById('goalInput');
-  if (gi) {
-    gi.addEventListener('input', (e) => { state.goalInput = e.target.value; });
-    gi.addEventListener('blur', () => {
-      const s = parseT(state.goalInput);
-      if (s >= 10 && s <= 1200) { applyGoal(s); state.goalInput = fmt(s); render(); }
-    });
-    gi.addEventListener('keydown', (e) => { if (e.key === 'Enter') gi.blur(); });
-  }
-}
-
-render();
-
-// Register service worker
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
