@@ -201,7 +201,14 @@
     .lap-dot { width: 8px; height: 8px; border-radius: 50%; }
     .lap-name { font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 600; color: var(--text-secondary); }
     .lap-dist { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-faintest); margin-left: auto; }
-    .lap-time { font-family: 'JetBrains Mono', monospace; font-size: 26px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; letter-spacing: -0.02em; }
+    .lap-time-input {
+      font-family: 'JetBrains Mono', monospace; font-size: 26px; font-weight: 700;
+      color: var(--text-primary); margin-bottom: 8px; letter-spacing: -0.02em;
+      background: transparent; border: none; border-bottom: 2px solid transparent;
+      width: 100%; padding: 0 0 2px 0; border-radius: 0;
+      transition: border-color 0.2s;
+    }
+    .lap-time-input:focus { border-bottom-color: var(--accent); }
     .lap-slider {
       width: 100%; height: 6px; border-radius: 3px;
       -webkit-appearance: none; appearance: none; cursor: pointer; margin-bottom: 8px;
@@ -482,7 +489,7 @@ function buildUI() {
     html += '<div class="lap-header"><div class="lap-dot" style="background:' + COLORS[i] + '"></div>';
     html += '<span class="lap-name">Lap ' + (i+1) + '</span>';
     html += '<span class="lap-dist" id="lapDist' + i + '">' + r.unit + '</span></div>';
-    html += '<div class="lap-time" id="lapTime' + i + '"></div>';
+    html += '<input class="lap-time-input" id="lapTime' + i + '" inputmode="decimal" autocomplete="off">';
     html += '<input type="range" class="lap-slider" id="lapSlider' + i + '" min="1" step="0.1">';
     html += '<div class="lap-meta"><span class="lap-pace" id="lapPace' + i + '"></span>';
     html += '<span class="lap-cum" id="lapCum' + i + '"></span></div></div>';
@@ -491,6 +498,18 @@ function buildUI() {
   for (let i = 0; i < 4; i++) {
     document.getElementById('lapSlider' + i).addEventListener('input', function() {
       handleLapChange(i, parseFloat(this.value));
+    });
+    const lapInput = document.getElementById('lapTime' + i);
+    lapInput.addEventListener('focus', function() {
+      this.select();
+    });
+    lapInput.addEventListener('blur', function() {
+      const secs = parseT(this.value);
+      if (secs > 0) handleLapChange(i, secs);
+      else this.value = fmt(state.laps[i]);
+    });
+    lapInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') this.blur();
     });
   }
 
@@ -547,7 +566,8 @@ function updateUI() {
     document.getElementById('barSeg' + i).style.width = ((L[i] / barTotal) * 100) + '%';
     document.getElementById('barLbl' + i).textContent = fmt(L[i]);
 
-    document.getElementById('lapTime' + i).textContent = fmt(L[i]);
+    const lapTimeEl = document.getElementById('lapTime' + i);
+    if (document.activeElement !== lapTimeEl) lapTimeEl.value = fmt(L[i]);
     document.getElementById('lapPace' + i).textContent = lapPace(L[i]) + '/mi';
     document.getElementById('lapCum' + i).textContent = '@ ' + fmt(c[i]);
 

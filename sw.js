@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lap-splitter-v3';
+const CACHE_NAME = 'lap-splitter-v4';
 const ASSETS = [
   '/',
   '/index.html',
