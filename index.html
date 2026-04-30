@@ -240,6 +240,78 @@
     .table-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
     .table-total { display: flex; padding: 12px 14px; background: var(--surface-raised); }
     .table-bold { font-weight: 700; }
+
+    /* ===== STOPWATCH ===== */
+    .sw-display {
+      font-family: 'JetBrains Mono', monospace; font-size: 48px; font-weight: 700;
+      color: var(--text-primary); text-align: center; margin-bottom: 8px;
+      letter-spacing: -0.02em; line-height: 1;
+    }
+    .sw-lap-indicator {
+      font-family: 'JetBrains Mono', monospace; font-size: 12px;
+      color: var(--text-faintest); text-align: center; margin-bottom: 16px; letter-spacing: 0.1em;
+    }
+    .sw-buttons { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
+    .sw-btn {
+      font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600;
+      padding: 14px 0; border: none; border-radius: 50px; cursor: pointer;
+      transition: all 0.2s; flex: 1; max-width: 140px; text-align: center;
+      letter-spacing: 0.03em;
+    }
+    .sw-btn-start { background: #22c55e; color: #fff; }
+    .sw-btn-start:active { background: #16a34a; }
+    .sw-btn-start.running { background: #ef4444; }
+    .sw-btn-start.running:active { background: #dc2626; }
+    .sw-btn-lap { background: var(--accent); color: #fff; }
+    .sw-btn-lap:active { background: #e04e2e; }
+    .sw-btn-lap:disabled { background: var(--border); color: var(--text-dim); cursor: default; }
+    .sw-btn-reset { background: var(--surface); color: var(--text-muted); border: 1.5px solid var(--border); }
+    .sw-btn-reset:active { background: var(--surface-raised); }
+    .sw-btn-reset:disabled { color: var(--text-dim); cursor: default; }
+
+    .sw-results { margin-top: 4px; }
+    .sw-result-row {
+      display: flex; align-items: center; padding: 10px 14px;
+      border-bottom: 1px solid var(--border-row); gap: 8px;
+    }
+    .sw-result-row:last-child { border-bottom: none; }
+    .sw-result-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .sw-result-lap { font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 600; color: var(--text-secondary); width: 45px; }
+    .sw-result-split { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; color: var(--text-primary); flex: 1; }
+    .sw-result-target { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-faintest); flex: 1; text-align: center; }
+    .sw-result-diff {
+      font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700;
+      flex: 1; text-align: right;
+    }
+    .sw-diff-ahead { color: #22c55e; }
+    .sw-diff-behind { color: #ef4444; }
+    .sw-diff-even { color: var(--text-muted); }
+
+    .sw-result-header {
+      display: flex; padding: 8px 14px; border-bottom: 1px solid var(--border-light);
+    }
+    .sw-result-header span {
+      font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-dim);
+      letter-spacing: 0.15em; font-weight: 600;
+    }
+    .sw-result-header .h-lap { width: 53px; }
+    .sw-result-header .h-split { flex: 1; }
+    .sw-result-header .h-target { flex: 1; text-align: center; }
+    .sw-result-header .h-diff { flex: 1; text-align: right; }
+
+    .sw-total-row {
+      display: flex; align-items: center; padding: 12px 14px;
+      background: var(--surface-raised); gap: 8px;
+    }
+    .sw-total-label { font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 700; color: var(--text-primary); width: 53px; }
+    .sw-total-time { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; color: var(--text-primary); flex: 1; }
+    .sw-total-target { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-faintest); flex: 1; text-align: center; }
+    .sw-total-diff { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; flex: 1; text-align: right; }
+
+    .sw-empty {
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim);
+      text-align: center; padding: 20px 14px; font-style: italic;
+    }
   </style>
 </head>
 <body>
@@ -303,6 +375,27 @@
     </div>
     <div id="tableBody"></div>
     <div class="table-total" id="tableFoot"></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="label">STOPWATCH</div>
+  <div class="sw-display" id="swDisplay">0:00.00</div>
+  <div class="sw-lap-indicator" id="swLapIndicator">READY</div>
+  <div class="sw-buttons">
+    <button type="button" class="sw-btn sw-btn-reset" id="swReset" disabled>Reset</button>
+    <button type="button" class="sw-btn sw-btn-start" id="swStart">Start</button>
+    <button type="button" class="sw-btn sw-btn-lap" id="swLap" disabled>Lap</button>
+  </div>
+  <div class="table" id="swResultsContainer" style="display:none;">
+    <div class="sw-result-header">
+      <span class="h-lap">LAP</span>
+      <span class="h-split">ACTUAL</span>
+      <span class="h-target">TARGET</span>
+      <span class="h-diff">+/-</span>
+    </div>
+    <div id="swResults"></div>
+    <div id="swTotalRow" style="display:none;"></div>
   </div>
 </div>
 
@@ -389,6 +482,7 @@ function switchRace(key) {
   state.laps = [b,b,b,b];
   state.strategy = 'even';
   state.goalLocked = true;
+  swReset();
   buildUI();
 }
 
@@ -640,6 +734,167 @@ function setupBarDrag(barEl) {
     divider.addEventListener('touchstart', start, {passive: false});
   }
 }
+
+// ===== STOPWATCH =====
+let sw = { running: false, startTime: 0, elapsed: 0, lapTimes: [], rafId: null };
+
+function fmtSw(ms) {
+  const totalSecs = ms / 1000;
+  const m = Math.floor(totalSecs / 60);
+  const s = totalSecs % 60;
+  const ws = Math.floor(s);
+  const h = Math.floor((s - ws) * 100);
+  return m + ':' + String(ws).padStart(2,'0') + '.' + String(h).padStart(2,'0');
+}
+
+function fmtDiff(diffSecs) {
+  const sign = diffSecs >= 0 ? '+' : '-';
+  const abs = Math.abs(diffSecs);
+  const m = Math.floor(abs / 60);
+  const s = abs % 60;
+  const ws = Math.floor(s);
+  const h = Math.round((s - ws) * 100);
+  if (m > 0) return sign + m + ':' + String(ws).padStart(2,'0') + '.' + String(h).padStart(2,'0');
+  return sign + ws + '.' + String(h).padStart(2,'0');
+}
+
+function swTick() {
+  if (!sw.running) return;
+  sw.elapsed = performance.now() - sw.startTime;
+  document.getElementById('swDisplay').textContent = fmtSw(sw.elapsed);
+  sw.rafId = requestAnimationFrame(swTick);
+}
+
+function swStart() {
+  const btn = document.getElementById('swStart');
+  const lapBtn = document.getElementById('swLap');
+  const resetBtn = document.getElementById('swReset');
+
+  if (!sw.running) {
+    // Start or resume
+    sw.startTime = performance.now() - sw.elapsed;
+    sw.running = true;
+    btn.textContent = 'Stop';
+    btn.classList.add('running');
+    lapBtn.disabled = false;
+    resetBtn.disabled = true;
+    if (sw.lapTimes.length === 0) {
+      document.getElementById('swLapIndicator').textContent = 'LAP 1 OF 4';
+    }
+    swTick();
+  } else {
+    // Stop
+    sw.running = false;
+    cancelAnimationFrame(sw.rafId);
+    btn.textContent = 'Resume';
+    btn.classList.remove('running');
+    lapBtn.disabled = true;
+    resetBtn.disabled = false;
+  }
+}
+
+function swLapClick() {
+  if (!sw.running || sw.lapTimes.length >= 4) return;
+
+  const lapIndex = sw.lapTimes.length;
+  const currentElapsed = performance.now() - sw.startTime;
+  const prevElapsed = sw.lapTimes.length > 0 ? sw.lapTimes[sw.lapTimes.length - 1].cumMs : 0;
+  const lapMs = currentElapsed - prevElapsed;
+
+  sw.lapTimes.push({ lapMs: lapMs, cumMs: currentElapsed });
+  renderSwResults();
+
+  // Update lap indicator
+  if (sw.lapTimes.length < 4) {
+    document.getElementById('swLapIndicator').textContent = 'LAP ' + (sw.lapTimes.length + 1) + ' OF 4';
+  }
+
+  // Auto-stop after 4 laps
+  if (sw.lapTimes.length >= 4) {
+    sw.running = false;
+    cancelAnimationFrame(sw.rafId);
+    sw.elapsed = currentElapsed;
+    document.getElementById('swDisplay').textContent = fmtSw(currentElapsed);
+    document.getElementById('swLapIndicator').textContent = 'FINISHED';
+
+    const btn = document.getElementById('swStart');
+    btn.textContent = 'Done';
+    btn.classList.remove('running');
+    btn.disabled = true;
+    document.getElementById('swLap').disabled = true;
+    document.getElementById('swReset').disabled = false;
+  }
+}
+
+function swReset() {
+  sw.running = false;
+  cancelAnimationFrame(sw.rafId);
+  sw.elapsed = 0;
+  sw.lapTimes = [];
+
+  document.getElementById('swDisplay').textContent = '0:00.00';
+  document.getElementById('swLapIndicator').textContent = 'READY';
+
+  const btn = document.getElementById('swStart');
+  btn.textContent = 'Start';
+  btn.classList.remove('running');
+  btn.disabled = false;
+  document.getElementById('swLap').disabled = true;
+  document.getElementById('swReset').disabled = true;
+
+  document.getElementById('swResultsContainer').style.display = 'none';
+  document.getElementById('swResults').innerHTML = '';
+  document.getElementById('swTotalRow').style.display = 'none';
+}
+
+function renderSwResults() {
+  const container = document.getElementById('swResultsContainer');
+  const resultsDiv = document.getElementById('swResults');
+  const totalRowDiv = document.getElementById('swTotalRow');
+  container.style.display = 'block';
+
+  let html = '';
+  let cumPlan = 0;
+
+  for (let i = 0; i < sw.lapTimes.length; i++) {
+    const actual = sw.lapTimes[i].lapMs / 1000;
+    const target = state.laps[i];
+    const diff = actual - target;
+    cumPlan += target;
+    const cumDiff = (sw.lapTimes[i].cumMs / 1000) - cumPlan;
+
+    const diffClass = diff < -0.05 ? 'sw-diff-ahead' : diff > 0.05 ? 'sw-diff-behind' : 'sw-diff-even';
+
+    html += '<div class="sw-result-row">';
+    html += '<div class="sw-result-dot" style="background:' + COLORS[i] + '"></div>';
+    html += '<div class="sw-result-lap">Lap ' + (i+1) + '</div>';
+    html += '<div class="sw-result-split">' + fmtSw(sw.lapTimes[i].lapMs) + '</div>';
+    html += '<div class="sw-result-target">' + fmt(target) + '</div>';
+    html += '<div class="sw-result-diff ' + diffClass + '">' + fmtDiff(diff) + '</div>';
+    html += '</div>';
+  }
+  resultsDiv.innerHTML = html;
+
+  // Show total row if all 4 laps done
+  if (sw.lapTimes.length >= 4) {
+    const totalActual = sw.lapTimes[3].cumMs;
+    const totalTarget = state.laps[0] + state.laps[1] + state.laps[2] + state.laps[3];
+    const totalDiff = (totalActual / 1000) - totalTarget;
+    const totalClass = totalDiff < -0.05 ? 'sw-diff-ahead' : totalDiff > 0.05 ? 'sw-diff-behind' : 'sw-diff-even';
+
+    totalRowDiv.style.display = 'flex';
+    totalRowDiv.className = 'sw-total-row';
+    totalRowDiv.innerHTML =
+      '<div class="sw-total-label">Total</div>' +
+      '<div class="sw-total-time">' + fmtSw(totalActual) + '</div>' +
+      '<div class="sw-total-target">' + fmt(totalTarget) + '</div>' +
+      '<div class="sw-total-diff ' + totalClass + '">' + fmtDiff(totalDiff) + '</div>';
+  }
+}
+
+document.getElementById('swStart').addEventListener('click', swStart);
+document.getElementById('swLap').addEventListener('click', swLapClick);
+document.getElementById('swReset').addEventListener('click', swReset);
 
 // ===== INIT =====
 buildUI();
