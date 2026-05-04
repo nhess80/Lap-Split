@@ -283,6 +283,14 @@
       font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700;
       flex: 1; text-align: right;
     }
+    .sw-result-cumdiff {
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600;
+      width: 62px; text-align: right; flex-shrink: 0;
+      padding: 2px 6px; border-radius: 4px;
+    }
+    .sw-cumdiff-ahead { color: #22c55e; background: rgba(34,197,94,0.1); }
+    .sw-cumdiff-behind { color: #ef4444; background: rgba(239,68,68,0.1); }
+    .sw-cumdiff-even { color: var(--text-muted); background: var(--surface-raised); }
     .sw-diff-ahead { color: #22c55e; }
     .sw-diff-behind { color: #ef4444; }
     .sw-diff-even { color: var(--text-muted); }
@@ -298,6 +306,7 @@
     .sw-result-header .h-split { flex: 1; }
     .sw-result-header .h-target { flex: 1; text-align: center; }
     .sw-result-header .h-diff { flex: 1; text-align: right; }
+    .sw-result-header .h-cum { width: 62px; text-align: right; flex-shrink: 0; }
 
     .sw-total-row {
       display: flex; align-items: center; padding: 12px 14px;
@@ -307,6 +316,7 @@
     .sw-total-time { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; color: var(--text-primary); flex: 1; }
     .sw-total-target { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-faintest); flex: 1; text-align: center; }
     .sw-total-diff { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; flex: 1; text-align: right; }
+    .sw-total-cum { width: 62px; flex-shrink: 0; }
 
     .sw-empty {
       font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim);
@@ -393,6 +403,7 @@
       <span class="h-split">ACTUAL</span>
       <span class="h-target">TARGET</span>
       <span class="h-diff">+/-</span>
+      <span class="h-cum">CUM</span>
     </div>
     <div id="swResults"></div>
     <div id="swTotalRow" style="display:none;"></div>
@@ -864,6 +875,7 @@ function renderSwResults() {
     const cumDiff = (sw.lapTimes[i].cumMs / 1000) - cumPlan;
 
     const diffClass = diff < -0.05 ? 'sw-diff-ahead' : diff > 0.05 ? 'sw-diff-behind' : 'sw-diff-even';
+    const cumDiffClass = cumDiff < -0.05 ? 'sw-cumdiff-ahead' : cumDiff > 0.05 ? 'sw-cumdiff-behind' : 'sw-cumdiff-even';
 
     html += '<div class="sw-result-row">';
     html += '<div class="sw-result-dot" style="background:' + COLORS[i] + '"></div>';
@@ -871,6 +883,7 @@ function renderSwResults() {
     html += '<div class="sw-result-split">' + fmtSw(sw.lapTimes[i].lapMs) + '</div>';
     html += '<div class="sw-result-target">' + fmt(target) + '</div>';
     html += '<div class="sw-result-diff ' + diffClass + '">' + fmtDiff(diff) + '</div>';
+    html += '<div class="sw-result-cumdiff ' + cumDiffClass + '">' + fmtDiff(cumDiff) + '</div>';
     html += '</div>';
   }
   resultsDiv.innerHTML = html;
@@ -888,7 +901,8 @@ function renderSwResults() {
       '<div class="sw-total-label">Total</div>' +
       '<div class="sw-total-time">' + fmtSw(totalActual) + '</div>' +
       '<div class="sw-total-target">' + fmt(totalTarget) + '</div>' +
-      '<div class="sw-total-diff ' + totalClass + '">' + fmtDiff(totalDiff) + '</div>';
+      '<div class="sw-total-diff ' + totalClass + '">' + fmtDiff(totalDiff) + '</div>' +
+      '<div class="sw-total-cum"></div>';
   }
 }
 
